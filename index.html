@@ -93,13 +93,10 @@
     background-size: 32px 32px;
     z-index: 1;
   }
-  .reel-frame .placeholder { position: absolute; inset: -8% -2%; background-size: cover; background-position: center; filter: grayscale(0.15) contrast(1.05); background-image: url('https://i.ytimg.com/vi/CwnZzXtBNNQ/maxresdefault.jpg'); transform: translateY(var(--py, 0px)) scale(1.06); transition: transform .8s cubic-bezier(.16,.84,.24,1), filter .6s ease; will-change: transform; }
-  .reel-frame:hover .placeholder { filter: grayscale(0) contrast(1.08); }
+  .reel-frame .placeholder { position: absolute; inset: 0; background-size: cover; background-position: center; filter: grayscale(0.15) contrast(1.05); background-image: url('https://i.ytimg.com/vi/CwnZzXtBNNQ/maxresdefault.jpg'); }
   .reel-frame .placeholder::after { content:""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.6) 100%); }
-  .reel-frame .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1); width: 110px; height: 110px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; transition: transform .5s cubic-bezier(.16,.84,.24,1), background .35s ease, border-color .35s ease; backdrop-filter: blur(2px); background: rgba(0,0,0,0.25); z-index: 2; }
-  .reel-frame .play-btn::before { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); animation: ringPulse 2.6s cubic-bezier(.4,0,.2,1) infinite; }
-  @keyframes ringPulse { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.6); opacity: 0; } }
-  .reel-frame:hover .play-btn { background: var(--text); border-color: var(--text); transform: translate(-50%, -50%) scale(1.06); }
+  .reel-frame .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 110px; height: 110px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; transition: background .3s, border-color .3s; backdrop-filter: blur(2px); background: rgba(0,0,0,0.25); z-index: 2; }
+  .reel-frame:hover .play-btn { background: var(--text); border-color: var(--text); }
   .reel-frame .play-btn::after { content: ""; border-style: solid; border-width: 14px 0 14px 22px; border-color: transparent transparent transparent var(--text); margin-left: 6px; transition: border-color .3s; }
   .reel-frame:hover .play-btn::after { border-left-color: var(--ink); }
   .reel-frame .corner { position: absolute; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: #cfcfcf; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
@@ -107,12 +104,22 @@
   .reel-frame .corner.tr { top: 22px; right: 24px; }
   .reel-frame .corner.bl { bottom: 22px; left: 24px; }
   .reel-frame .corner.br { bottom: 22px; right: 24px; }
-  .reel-frame.is-playing { cursor: default; }
-  .reel-frame.is-playing::before,
-  .reel-frame.is-playing .placeholder,
-  .reel-frame.is-playing .play-btn,
-  .reel-frame.is-playing .corner { display: none; }
-  .reel-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 3; }
+  /* ============ VIDEO LIGHTBOX ============ */
+  .vbx { position: fixed; inset: 0; z-index: 200; background: rgba(6,6,6,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); display: flex; align-items: center; justify-content: center; padding: 5vw; opacity: 0; pointer-events: none; transition: opacity .35s ease; }
+  .vbx.is-open { opacity: 1; pointer-events: auto; }
+  .vbx .stage { position: relative; width: 100%; max-width: 1280px; aspect-ratio: 16/9; background: #000; border: 1px solid var(--line-2); transform: translateY(24px) scale(0.985); opacity: 0; transition: transform .5s cubic-bezier(.16,.84,.24,1), opacity .35s ease; }
+  .vbx.is-open .stage { transform: translateY(0) scale(1); opacity: 1; }
+  .vbx iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .vbx .close { position: absolute; top: -44px; right: 0; width: 36px; height: 36px; border: 1px solid var(--line-2); background: transparent; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .25s, color .25s, border-color .25s; }
+  .vbx .close:hover { background: var(--text); color: var(--ink); border-color: var(--text); }
+  .vbx .close::before, .vbx .close::after { content: ""; position: absolute; width: 14px; height: 1px; background: currentColor; }
+  .vbx .close::before { transform: rotate(45deg); }
+  .vbx .close::after { transform: rotate(-45deg); }
+  .vbx .label { position: absolute; top: -36px; left: 0; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-2); }
+  body.vbx-locked { overflow: hidden; }
+  @media (max-width: 700px) {
+    .vbx .close { top: -40px; }
+  }
 
   /* ============ SECTION HEAD ============ */
   .sec-head { display: flex; align-items: flex-end; justify-content: space-between; padding: 0 0 40px; border-bottom: 1px solid var(--line); margin-bottom: 56px; }
@@ -124,10 +131,8 @@
   /* ============ WORK GRID ============ */
   .work { padding: 40px 0 140px; }
   .work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
-  .project { position: relative; transition: transform .6s cubic-bezier(.16,.84,.24,1); }
-  .project:hover { transform: translateY(-6px); }
-  .project .frame { position: relative; aspect-ratio: 16/10; background: var(--ink-2); border: 1px solid var(--line); overflow: hidden; cursor: pointer; transition: border-color .35s ease; }
-  .project:hover .frame { border-color: var(--line-2); }
+  .project { position: relative; }
+  .project .frame { position: relative; aspect-ratio: 16/10; background: var(--ink-2); border: 1px solid var(--line); overflow: hidden; cursor: pointer; }
   .project .frame::before {
     content: ""; position: absolute; inset: 0;
     background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
@@ -150,8 +155,7 @@
   .project .info .l .meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-2); margin-top: 8px; }
   .project .info .yr { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; color: var(--text-2); padding-top: 4px; }
 
-  .project .frame .thumb { position: absolute; inset: 0; background-size: cover; background-position: center; filter: grayscale(0.12) contrast(1.05) brightness(0.85); transition: transform .8s ease, filter .4s ease; }
-  .project:hover .frame .thumb { transform: scale(1.04); filter: grayscale(0) contrast(1.05) brightness(0.95); }
+  .project .frame .thumb { position: absolute; inset: 0; background-size: cover; background-position: center; filter: grayscale(0.12) contrast(1.05) brightness(0.85); }
   .project .frame .thumb::after { content:""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 100%); }
   .frame.f1 .thumb { background-image: url('https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=1600&q=80'); }
   .frame.f2 .thumb { background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1600&q=80'); }
@@ -235,6 +239,14 @@
 <div class="scroll-progress" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
+<!-- VIDEO LIGHTBOX -->
+<div class="vbx" id="vbx" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Video">
+  <div class="stage">
+    <span class="label" id="vbx-label"></span>
+    <button class="close" type="button" aria-label="Schließen"></button>
+  </div>
+</div>
+
 <!-- NAV -->
 <header class="nav">
   <div class="wrap row">
@@ -270,7 +282,7 @@
 <!-- FEATURED REEL -->
 <section class="reel-section">
   <div class="wrap">
-    <div class="reel-frame" role="button" tabindex="0" aria-label="Showreel abspielen" data-video-id="CwnZzXtBNNQ" data-reveal="rise-lg">
+    <div class="reel-frame" role="button" tabindex="0" aria-label="Showreel abspielen" data-video-id="CwnZzXtBNNQ">
       <div class="placeholder"></div>
       <span class="corner tl">SHOWREEL · 2026</span>
       <span class="corner tr">YouTube</span>
@@ -293,8 +305,8 @@
     </div>
 
     <div class="work-grid">
-      <article class="project" data-reveal style="--rd:.05s">
-        <div class="frame f1">
+      <article class="project" data-reveal="rise" style="--rd:.05s">
+        <div class="frame f1" role="button" tabindex="0" data-video-id="CwnZzXtBNNQ" data-video-title="Stille Stunden · Aesop">
           <div class="thumb"></div>
           <span class="num">01</span>
           <div class="play-mini"></div>
@@ -309,8 +321,8 @@
         </div>
       </article>
 
-      <article class="project" data-reveal style="--rd:.15s">
-        <div class="frame f2">
+      <article class="project" data-reveal="rise" style="--rd:.15s">
+        <div class="frame f2" role="button" tabindex="0" data-video-id="CwnZzXtBNNQ" data-video-title="Norden · Vitra">
           <div class="thumb"></div>
           <span class="num">02</span>
           <div class="play-mini"></div>
@@ -325,8 +337,8 @@
         </div>
       </article>
 
-      <article class="project" data-reveal style="--rd:.05s">
-        <div class="frame f3">
+      <article class="project" data-reveal="rise" style="--rd:.05s">
+        <div class="frame f3" role="button" tabindex="0" data-video-id="CwnZzXtBNNQ" data-video-title="Atelier 49 · Hay">
           <div class="thumb"></div>
           <span class="num">03</span>
           <div class="play-mini"></div>
@@ -341,8 +353,8 @@
         </div>
       </article>
 
-      <article class="project" data-reveal style="--rd:.15s">
-        <div class="frame f4">
+      <article class="project" data-reveal="rise" style="--rd:.15s">
+        <div class="frame f4" role="button" tabindex="0" data-video-id="CwnZzXtBNNQ" data-video-title="Langsame Morgen · Maharam">
           <div class="thumb"></div>
           <span class="num">04</span>
           <div class="play-mini"></div>
@@ -357,8 +369,8 @@
         </div>
       </article>
 
-      <article class="project" data-reveal style="--rd:.05s">
-        <div class="frame f5">
+      <article class="project" data-reveal="rise" style="--rd:.05s">
+        <div class="frame f5" role="button" tabindex="0" data-video-id="CwnZzXtBNNQ" data-video-title="Feldnotizen · Kurzfilm">
           <div class="thumb"></div>
           <span class="num">05</span>
           <div class="play-mini"></div>
@@ -373,8 +385,8 @@
         </div>
       </article>
 
-      <article class="project" data-reveal style="--rd:.15s">
-        <div class="frame f6">
+      <article class="project" data-reveal="rise" style="--rd:.15s">
+        <div class="frame f6" role="button" tabindex="0" data-video-id="CwnZzXtBNNQ" data-video-title="Werkstatt · Tekla">
           <div class="thumb"></div>
           <span class="num">06</span>
           <div class="play-mini"></div>
@@ -509,25 +521,45 @@
   (function () {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    /* === Reel: lazy YouTube embed === */
-    const reel = document.querySelector('.reel-frame[data-video-id]');
-    if (reel) {
-      const play = () => {
-        if (reel.classList.contains('is-playing')) return;
-        const id = reel.getAttribute('data-video-id');
-        const iframe = document.createElement('iframe');
-        iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
-        iframe.title = 'thomatic. — Showreel';
-        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-        iframe.allowFullscreen = true;
-        reel.appendChild(iframe);
-        reel.classList.add('is-playing');
-      };
-      reel.addEventListener('click', play);
-      reel.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); }
-      });
+    /* === Video lightbox === */
+    const vbx = document.getElementById('vbx');
+    const vbxStage = vbx.querySelector('.stage');
+    const vbxLabel = document.getElementById('vbx-label');
+    const vbxClose = vbx.querySelector('.close');
+
+    function openVideo(id, title) {
+      if (!id) return;
+      vbxLabel.textContent = title || 'Showreel';
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+      iframe.title = title || 'thomatic. — Video';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      vbxStage.appendChild(iframe);
+      vbx.classList.add('is-open');
+      vbx.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('vbx-locked');
     }
+
+    function closeVideo() {
+      vbx.classList.remove('is-open');
+      vbx.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('vbx-locked');
+      const iframe = vbxStage.querySelector('iframe');
+      if (iframe) iframe.remove();
+    }
+
+    vbxClose.addEventListener('click', closeVideo);
+    vbx.addEventListener('click', e => { if (e.target === vbx) closeVideo(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && vbx.classList.contains('is-open')) closeVideo(); });
+
+    document.querySelectorAll('[data-video-id]').forEach(el => {
+      const trigger = () => openVideo(el.getAttribute('data-video-id'), el.getAttribute('data-video-title'));
+      el.addEventListener('click', trigger);
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); trigger(); }
+      });
+    });
 
     /* === Hero line-mask reveal on load === */
     requestAnimationFrame(() => {
@@ -552,7 +584,6 @@
     /* === Scroll progress bar + nav state + reel parallax === */
     const progress = document.querySelector('.scroll-progress');
     const nav = document.querySelector('.nav');
-    const placeholder = document.querySelector('.reel-frame .placeholder');
     let ticking = false;
 
     function onScroll() {
@@ -561,13 +592,6 @@
       const p = max > 0 ? (h.scrollTop / max) * 100 : 0;
       if (progress) progress.style.setProperty('--p', p + '%');
       if (nav) nav.classList.toggle('is-scrolled', h.scrollTop > 24);
-
-      if (placeholder && !reduce) {
-        const rect = placeholder.parentElement.getBoundingClientRect();
-        const center = rect.top + rect.height / 2 - window.innerHeight / 2;
-        const py = Math.max(-40, Math.min(40, -center * 0.06));
-        placeholder.style.setProperty('--py', py + 'px');
-      }
       ticking = false;
     }
 
