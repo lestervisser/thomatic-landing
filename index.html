@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>thomatic. — Thomas Krutsch · Freier Videograf</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="thomatic. — Bewegtbild, leise gemacht. Freier Videograf Thomas Krutsch aus dem Thurgau. Markenfilme, Dokumentation, Regie & Kamera." />
+<meta property="og:title" content="thomatic. — Thomas Krutsch · Freier Videograf" />
+<meta property="og:description" content="Bewegtbild, leise gemacht. Für Marken, Macher und Menschen, denen Details wichtig sind." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#0a0a0a" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --ink-2: #111111;
+    --ink-3: #161616;
+    --line: rgba(255,255,255,0.08);
+    --line-2: rgba(255,255,255,0.14);
+    --text: #ececec;
+    --text-2: #8a8a8a;
+    --text-3: #555555;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body { margin: 0; padding: 0; background: var(--ink); color: var(--text); font-family: 'Inter Tight', sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  img, video, iframe { display: block; max-width: 100%; }
+  ::selection { background: var(--text); color: var(--ink); }
+
+  /* ============ SCROLL PROGRESS ============ */
+  .scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 1px; background: transparent; z-index: 60; pointer-events: none; }
+  .scroll-progress::after { content: ""; display: block; height: 100%; width: var(--p, 0%); background: linear-gradient(90deg, transparent, var(--text) 60%, var(--text)); transition: width .12s linear; }
+
+  /* ============ GRAIN OVERLAY ============ */
+  .grain { position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: 0.05; mix-blend-mode: overlay; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>"); }
+
+  /* ============ REVEAL UTILITIES ============ */
+  [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); transition-delay: var(--rd, 0s); will-change: opacity, transform; }
+  [data-reveal].is-in { opacity: 1; transform: translateY(0); }
+  [data-reveal="fade"] { transform: none; }
+  [data-reveal="rise"] { transform: translateY(48px); }
+  [data-reveal="rise-lg"] { transform: translateY(72px); }
+
+  .line-mask { display: block; overflow: hidden; }
+  .line-mask > span { display: inline-block; transform: translateY(110%); opacity: 0; transition: transform 1.1s cubic-bezier(.16,.84,.24,1), opacity 1.1s cubic-bezier(.16,.84,.24,1); transition-delay: var(--ld, 0s); }
+  .line-mask.is-in > span { transform: translateY(0); opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    [data-reveal], .line-mask > span, .hero .tag .dot { transform: none !important; opacity: 1 !important; transition: none !important; animation: none !important; }
+  }
+
+  .wrap { max-width: 1440px; margin: 0 auto; padding: 0 56px; }
+
+  /* ============ NAV ============ */
+  .nav { position: sticky; top: 0; z-index: 50; background: rgba(10,10,10,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid transparent; transition: background .35s ease, backdrop-filter .35s ease, border-color .35s ease; }
+  .nav.is-scrolled { background: rgba(10,10,10,0.82); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom-color: var(--line); }
+  .nav .row { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .brand { font-family: 'Inter Tight', sans-serif; font-weight: 300; font-size: 22px; letter-spacing: -0.05em; color: var(--text); }
+  .brand b { font-weight: 700; }
+  .nav .links { display: flex; gap: 36px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-2); }
+  .nav .links a { position: relative; transition: color .2s; }
+  .nav .links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -22px; height: 1px; background: var(--text); transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.16,.84,.24,1); }
+  .nav .links a:hover::after, .nav .links a.active::after { transform: scaleX(1); }
+  .nav .links a:hover, .nav .links a.active { color: var(--text); }
+  .nav .cta { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; padding: 11px 18px; border: 1px solid var(--line-2); color: var(--text); transition: all .2s; }
+  .nav .cta:hover { background: var(--text); color: var(--ink); border-color: var(--text); }
+
+  /* ============ HERO ============ */
+  .hero { padding: 120px 0 100px; position: relative; }
+  .hero .tag { display: flex; align-items: center; gap: 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--text-2); margin-bottom: 36px; }
+  .hero .tag .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .hero h1 { font-family: 'Inter Tight', sans-serif; font-weight: 300; font-size: clamp(48px, 7.4vw, 108px); line-height: 0.96; letter-spacing: -0.055em; margin: 0; max-width: 1100px; color: var(--text); }
+  .hero h1 .line-mask { display: block; }
+  .hero h1 b { font-weight: 700; }
+  .hero h1 .dim { color: var(--text-3); }
+  .hero .meta-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 32px; margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--line); }
+  .hero .meta-row .cell .k { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+  .hero .meta-row .cell .v { font-family: 'Inter Tight', sans-serif; font-size: 16px; color: var(--text); letter-spacing: -0.01em; }
+
+  /* ============ FEATURED REEL ============ */
+  .reel-section { padding: 40px 0 120px; }
+  .reel-frame { position: relative; aspect-ratio: 21/9; background: var(--ink-2); border: 1px solid var(--line); overflow: hidden; cursor: pointer; }
+  .reel-frame::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 32px 32px;
+    z-index: 1;
+  }
+  .reel-frame .placeholder { position: absolute; inset: -8% -2%; background-size: cover; background-position: center; filter: grayscale(0.15) contrast(1.05); background-image: url('https://i.ytimg.com/vi/CwnZzXtBNNQ/maxresdefault.jpg'); transform: translateY(var(--py, 0px)) scale(1.06); transition: transform .8s cubic-bezier(.16,.84,.24,1), filter .6s ease; will-change: transform; }
+  .reel-frame:hover .placeholder { filter: grayscale(0) contrast(1.08); }
+  .reel-frame .placeholder::after { content:""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.6) 100%); }
+  .reel-frame .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1); width: 110px; height: 110px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; transition: transform .5s cubic-bezier(.16,.84,.24,1), background .35s ease, border-color .35s ease; backdrop-filter: blur(2px); background: rgba(0,0,0,0.25); z-index: 2; }
+  .reel-frame .play-btn::before { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); animation: ringPulse 2.6s cubic-bezier(.4,0,.2,1) infinite; }
+  @keyframes ringPulse { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.6); opacity: 0; } }
+  .reel-frame:hover .play-btn { background: var(--text); border-color: var(--text); transform: translate(-50%, -50%) scale(1.06); }
+  .reel-frame .play-btn::after { content: ""; border-style: solid; border-width: 14px 0 14px 22px; border-color: transparent transparent transparent var(--text); margin-left: 6px; transition: border-color .3s; }
+  .reel-frame:hover .play-btn::after { border-left-color: var(--ink); }
+  .reel-frame .corner { position: absolute; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: #cfcfcf; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+  .reel-frame .corner.tl { top: 22px; left: 24px; }
+  .reel-frame .corner.tr { top: 22px; right: 24px; }
+  .reel-frame .corner.bl { bottom: 22px; left: 24px; }
+  .reel-frame .corner.br { bottom: 22px; right: 24px; }
+  .reel-frame.is-playing { cursor: default; }
+  .reel-frame.is-playing::before,
+  .reel-frame.is-playing .placeholder,
+  .reel-frame.is-playing .play-btn,
+  .reel-frame.is-playing .corner { display: none; }
+  .reel-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 3; }
+
+  /* ============ SECTION HEAD ============ */
+  .sec-head { display: flex; align-items: flex-end; justify-content: space-between; padding: 0 0 40px; border-bottom: 1px solid var(--line); margin-bottom: 56px; }
+  .sec-head .lead { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-2); }
+  .sec-head h2 { font-family: 'Inter Tight', sans-serif; font-weight: 300; font-size: clamp(36px, 4.6vw, 64px); letter-spacing: -0.05em; line-height: 1; margin: 16px 0 0; color: var(--text); }
+  .sec-head h2 b { font-weight: 700; }
+  .sec-head .right { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-2); padding-bottom: 6px; }
+
+  /* ============ WORK GRID ============ */
+  .work { padding: 40px 0 140px; }
+  .work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .project { position: relative; transition: transform .6s cubic-bezier(.16,.84,.24,1); }
+  .project:hover { transform: translateY(-6px); }
+  .project .frame { position: relative; aspect-ratio: 16/10; background: var(--ink-2); border: 1px solid var(--line); overflow: hidden; cursor: pointer; transition: border-color .35s ease; }
+  .project:hover .frame { border-color: var(--line-2); }
+  .project .frame::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 28px 28px;
+    z-index: 1;
+  }
+  .project .frame::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 60%);
+    z-index: 1;
+  }
+  .project .frame .play-mini { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 72px; height: 72px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.45); background: rgba(0,0,0,0.25); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; transition: all .3s; z-index: 2; }
+  .project:hover .frame .play-mini { background: var(--text); border-color: var(--text); }
+  .project .frame .play-mini::after { content: ""; border-style: solid; border-width: 9px 0 9px 14px; border-color: transparent transparent transparent var(--text); margin-left: 4px; transition: border-color .3s; }
+  .project:hover .frame .play-mini::after { border-left-color: var(--ink); }
+  .project .frame .duration { position: absolute; bottom: 16px; right: 18px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--text); background: rgba(0,0,0,0.6); padding: 5px 9px; z-index: 2; }
+  .project .frame .num { position: absolute; top: 18px; left: 20px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; color: #cfcfcf; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+  .project .info { display: flex; align-items: flex-start; justify-content: space-between; padding-top: 22px; gap: 24px; }
+  .project .info .l h3 { font-family: 'Inter Tight', sans-serif; font-weight: 500; font-size: 22px; letter-spacing: -0.025em; margin: 0; color: var(--text); }
+  .project .info .l .meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-2); margin-top: 8px; }
+  .project .info .yr { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; color: var(--text-2); padding-top: 4px; }
+
+  .project .frame .thumb { position: absolute; inset: 0; background-size: cover; background-position: center; filter: grayscale(0.12) contrast(1.05) brightness(0.85); transition: transform .8s ease, filter .4s ease; }
+  .project:hover .frame .thumb { transform: scale(1.04); filter: grayscale(0) contrast(1.05) brightness(0.95); }
+  .project .frame .thumb::after { content:""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 100%); }
+  .frame.f1 .thumb { background-image: url('https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=1600&q=80'); }
+  .frame.f2 .thumb { background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1600&q=80'); }
+  .frame.f3 .thumb { background-image: url('https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1600&q=80'); }
+  .frame.f4 .thumb { background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80'); }
+  .frame.f5 .thumb { background-image: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1600&q=80'); }
+  .frame.f6 .thumb { background-image: url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1600&q=80'); }
+
+  /* ============ ABOUT / SERVICES ============ */
+  .about { padding: 40px 0 140px; }
+  .about-grid { display: grid; grid-template-columns: 0.9fr 1fr; gap: 80px; align-items: start; }
+  .portrait { position: relative; aspect-ratio: 4/5; background: var(--ink-2); border: 1px solid var(--line); overflow: hidden; }
+  .portrait .img { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=1200&q=80'); background-size: cover; background-position: center; filter: grayscale(0.2) contrast(1.05) brightness(0.92); }
+  .portrait .img::after { content:""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.55) 100%); }
+  .portrait .caption { position: absolute; bottom: 18px; left: 20px; right: 20px; display: flex; align-items: flex-end; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: #dcdcdc; z-index: 2; }
+  .portrait .caption .name { font-family: 'Inter Tight', sans-serif; font-weight: 500; font-size: 16px; letter-spacing: -0.02em; text-transform: none; color: var(--text); }
+  .about p { font-family: 'Inter Tight', sans-serif; font-weight: 300; font-size: clamp(22px, 2.2vw, 30px); line-height: 1.45; letter-spacing: -0.02em; color: var(--text); margin: 0 0 20px; max-width: 640px; }
+  .about p.lead { font-weight: 300; }
+  .about p b { font-weight: 600; }
+  .about p.dim { color: var(--text-2); font-size: 18px; line-height: 1.6; max-width: 520px; }
+  .services { display: flex; flex-direction: column; margin-top: 80px; }
+  .services .row { position: relative; display: grid; grid-template-columns: 60px 1fr auto; gap: 24px; padding: 28px 0; border-top: 1px solid var(--line); align-items: baseline; cursor: pointer; transition: padding .5s cubic-bezier(.16,.84,.24,1); }
+  .services .row::before { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--text); transform: scaleX(0); transform-origin: left; transition: transform .6s cubic-bezier(.16,.84,.24,1); }
+  .services .row:hover::before { transform: scaleX(1); }
+  .services .row:hover { padding-left: 14px; }
+  .services .row:last-child { border-bottom: 1px solid var(--line); }
+  .services .row .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--text-3); transition: color .3s ease; }
+  .services .row:hover .num { color: var(--text); }
+  .services .row .nm { font-family: 'Inter Tight', sans-serif; font-weight: 500; font-size: 22px; letter-spacing: -0.025em; color: var(--text); }
+  .services .row .nm small { display: block; font-family: 'Inter Tight', sans-serif; font-weight: 400; font-size: 14px; color: var(--text-2); margin-top: 6px; letter-spacing: -0.005em; }
+  .services .row .arrow { font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--text-2); transition: transform .5s cubic-bezier(.16,.84,.24,1), color .3s ease; }
+  .services .row:hover .arrow { transform: translateX(10px); color: var(--text); }
+
+  /* ============ CLIENTS ============ */
+  .clients { padding: 40px 0 140px; }
+  .clients-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .clients-grid .cell { position: relative; background: var(--ink); padding: 40px 24px; display: flex; align-items: center; justify-content: center; font-family: 'Inter Tight', sans-serif; font-weight: 500; font-size: 18px; letter-spacing: -0.02em; color: var(--text-2); transition: color .35s ease, background .5s ease; overflow: hidden; }
+  .clients-grid .cell::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.06), transparent 60%); opacity: 0; transition: opacity .4s ease; pointer-events: none; }
+  .clients-grid .cell:hover { color: var(--text); }
+  .clients-grid .cell:hover::before { opacity: 1; }
+
+  /* ============ TESTIMONIAL ============ */
+  .quote { padding: 80px 0 140px; }
+  .quote blockquote { margin: 0; max-width: 1100px; }
+  .quote .q { font-family: 'Inter Tight', sans-serif; font-weight: 300; font-size: clamp(28px, 3.6vw, 52px); line-height: 1.25; letter-spacing: -0.035em; color: var(--text); }
+  .quote .q b { font-weight: 600; }
+  .quote .who { display: flex; align-items: center; gap: 16px; margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-2); }
+  .quote .who .bar { width: 32px; height: 1px; background: var(--text-3); }
+
+  /* ============ CONTACT / FOOTER ============ */
+  .contact { padding: 100px 0 60px; border-top: 1px solid var(--line); }
+  .contact h2 { font-family: 'Inter Tight', sans-serif; font-weight: 300; font-size: clamp(56px, 8.4vw, 144px); line-height: 0.92; letter-spacing: -0.06em; margin: 0; color: var(--text); }
+  .contact h2 b { font-weight: 700; }
+  .contact h2 a { display: inline-flex; align-items: center; gap: 18px; transition: opacity .2s; }
+  .contact h2 a:hover { opacity: 0.7; }
+  .contact h2 a .arr { font-weight: 300; color: var(--text-2); transition: transform .3s; }
+  .contact h2 a:hover .arr { transform: translateX(12px); color: var(--text); }
+  .contact .info-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 100px; padding-top: 36px; border-top: 1px solid var(--line); }
+  .contact .info-row .cell .k { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+  .contact .info-row .cell .v { font-family: 'Inter Tight', sans-serif; font-size: 16px; color: var(--text); letter-spacing: -0.005em; line-height: 1.5; }
+  .contact .info-row .cell .v a { border-bottom: 1px solid var(--line-2); padding-bottom: 1px; }
+
+  footer { padding: 40px 0 36px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-3); }
+  footer .l { display: flex; gap: 28px; }
+
+  @media (max-width: 900px) {
+    .wrap { padding: 0 24px; }
+    .work-grid { grid-template-columns: 1fr; }
+    .hero .meta-row { grid-template-columns: repeat(2, 1fr); }
+    .about-grid { grid-template-columns: 1fr; gap: 48px; }
+    .clients-grid { grid-template-columns: repeat(2, 1fr); }
+    .contact .info-row { grid-template-columns: repeat(2, 1fr); }
+    .reel-frame .play-btn { width: 80px; height: 80px; }
+    .reel-frame .play-btn::after { border-width: 10px 0 10px 16px; }
+  }
+</style>
+
+</head>
+<body>
+
+<div class="scroll-progress" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap row">
+    <div class="brand">thom<b>atic.</b></div>
+    <nav class="links">
+      <a class="active" href="#work">Arbeiten</a>
+      <a href="#about">Über</a>
+      <a href="#services">Leistungen</a>
+      <a href="#contact">Kontakt</a>
+    </nav>
+    <a class="cta" href="#contact">Anfragen</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="tag" data-reveal style="--rd:.05s"><span class="dot"></span><span>Verfügbar für Projekte</span></div>
+    <h1>
+      <span class="line-mask" style="--ld:.15s"><span>Bewegtbild, <b>leise gemacht.</b></span></span>
+      <span class="line-mask dim-line" style="--ld:.32s"><span class="dim">Für Marken, Macher und Menschen,</span></span>
+      <span class="line-mask dim-line" style="--ld:.46s"><span class="dim">denen Details wichtig sind.</span></span>
+    </h1>
+    <div class="meta-row">
+      <div class="cell" data-reveal style="--rd:.6s"><div class="k">Disziplin</div><div class="v">Regie · Kamera · Schnitt</div></div>
+      <div class="cell" data-reveal style="--rd:.7s"><div class="k">Standort</div><div class="v">Thurgau, Schweiz</div></div>
+      <div class="cell" data-reveal style="--rd:.8s"><div class="k">Tätig seit</div><div class="v">2018</div></div>
+      <div class="cell" data-reveal style="--rd:.9s"><div class="k">Studio</div><div class="v">thomatic. — von Thomas Krutsch</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED REEL -->
+<section class="reel-section">
+  <div class="wrap">
+    <div class="reel-frame" role="button" tabindex="0" aria-label="Showreel abspielen" data-video-id="CwnZzXtBNNQ" data-reveal="rise-lg">
+      <div class="placeholder"></div>
+      <span class="corner tl">SHOWREEL · 2026</span>
+      <span class="corner tr">YouTube</span>
+      <div class="play-btn"></div>
+      <span class="corner bl">Ausgewählte Arbeiten</span>
+      <span class="corner br">GEDREHT IM THURGAU · CH</span>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section class="work" id="work">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div>
+        <div class="lead">— 01 / Ausgewählte Arbeiten</div>
+        <h2>Aktuelle <b>Filme.</b></h2>
+      </div>
+      <div class="right">06 Projekte · 2024 — 2026</div>
+    </div>
+
+    <div class="work-grid">
+      <article class="project" data-reveal style="--rd:.05s">
+        <div class="frame f1">
+          <div class="thumb"></div>
+          <span class="num">01</span>
+          <div class="play-mini"></div>
+          <span class="duration">02:14</span>
+        </div>
+        <div class="info">
+          <div class="l">
+            <h3>Stille Stunden</h3>
+            <div class="meta">Markenfilm · Aesop</div>
+          </div>
+          <div class="yr">'26</div>
+        </div>
+      </article>
+
+      <article class="project" data-reveal style="--rd:.15s">
+        <div class="frame f2">
+          <div class="thumb"></div>
+          <span class="num">02</span>
+          <div class="play-mini"></div>
+          <span class="duration">01:48</span>
+        </div>
+        <div class="info">
+          <div class="l">
+            <h3>Norden</h3>
+            <div class="meta">Dokumentation · Vitra</div>
+          </div>
+          <div class="yr">'25</div>
+        </div>
+      </article>
+
+      <article class="project" data-reveal style="--rd:.05s">
+        <div class="frame f3">
+          <div class="thumb"></div>
+          <span class="num">03</span>
+          <div class="play-mini"></div>
+          <span class="duration">03:02</span>
+        </div>
+        <div class="info">
+          <div class="l">
+            <h3>Atelier 49</h3>
+            <div class="meta">Studio-Porträt · Hay</div>
+          </div>
+          <div class="yr">'25</div>
+        </div>
+      </article>
+
+      <article class="project" data-reveal style="--rd:.15s">
+        <div class="frame f4">
+          <div class="thumb"></div>
+          <span class="num">04</span>
+          <div class="play-mini"></div>
+          <span class="duration">00:58</span>
+        </div>
+        <div class="info">
+          <div class="l">
+            <h3>Langsame Morgen</h3>
+            <div class="meta">Kampagne · Maharam</div>
+          </div>
+          <div class="yr">'25</div>
+        </div>
+      </article>
+
+      <article class="project" data-reveal style="--rd:.05s">
+        <div class="frame f5">
+          <div class="thumb"></div>
+          <span class="num">05</span>
+          <div class="play-mini"></div>
+          <span class="duration">04:11</span>
+        </div>
+        <div class="info">
+          <div class="l">
+            <h3>Feldnotizen</h3>
+            <div class="meta">Kurzfilm · Persönlich</div>
+          </div>
+          <div class="yr">'24</div>
+        </div>
+      </article>
+
+      <article class="project" data-reveal style="--rd:.15s">
+        <div class="frame f6">
+          <div class="thumb"></div>
+          <span class="num">06</span>
+          <div class="play-mini"></div>
+          <span class="duration">01:32</span>
+        </div>
+        <div class="info">
+          <div class="l">
+            <h3>Werkstatt</h3>
+            <div class="meta">Prozessfilm · Tekla</div>
+          </div>
+          <div class="yr">'24</div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / SERVICES -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div>
+        <div class="lead">— 02 / Studio</div>
+        <h2>Über &amp; <b>Leistungen.</b></h2>
+      </div>
+      <div class="right">Thurgau · Verfügbar für Projekte</div>
+    </div>
+
+    <div class="about-grid">
+      <div class="portrait" data-reveal>
+        <div class="img"></div>
+        <div class="caption">
+          <span class="name">Thomas Krutsch</span>
+          <span>Thurgau · 2026</span>
+        </div>
+      </div>
+      <div data-reveal style="--rd:.15s">
+        <p class="lead">Ich bin <b>Thomas Krutsch</b> — freier Videograf aus dem Thurgau, tätig unter dem Studionamen <b>thomatic.</b></p>
+        <p class="dim">Ich inszeniere, drehe und schneide Filme für Marken, Macher und Kulturinstitutionen. Die Arbeit ist geduldig, beobachtend und baut auf echte Menschen und echte Orte — nicht überproduziert, nicht überdramatisiert.</p>
+        <p class="dim">Die meisten Projekte begleite ich vollständig, allein oder mit einem kleinen, vertrauten Team. Weltweit einsetzbar.</p>
+      </div>
+    </div>
+
+    <div class="services" id="services">
+        <div class="row" data-reveal="fade" style="--rd:.05s">
+          <span class="num">01</span>
+          <span class="nm">Markenfilme<small>Story-, Identitäts- und Kampagnenfilme für Marken und Studios.</small></span>
+          <span class="arrow">→</span>
+        </div>
+        <div class="row" data-reveal="fade" style="--rd:.12s">
+          <span class="num">02</span>
+          <span class="nm">Dokumentation &amp; Porträt<small>Porträts von Menschen, Orten und Prozessen, die Zeit verdienen.</small></span>
+          <span class="arrow">→</span>
+        </div>
+        <div class="row" data-reveal="fade" style="--rd:.19s">
+          <span class="num">03</span>
+          <span class="nm">Regie &amp; Kamera<small>Buchbar als DOP oder Regisseur für größere Produktionen.</small></span>
+          <span class="arrow">→</span>
+        </div>
+        <div class="row" data-reveal="fade" style="--rd:.26s">
+          <span class="num">04</span>
+          <span class="nm">Schnitt &amp; Post<small>Offline-/Online-Schnitt, Color Grading, Sound Mix.</small></span>
+          <span class="arrow">→</span>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTS -->
+<section class="clients">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div>
+        <div class="lead">— 03 / Vertrauen von</div>
+        <h2>Ausgewählte <b>Kunden.</b></h2>
+      </div>
+      <div class="right">Marken · Studios · Institutionen</div>
+    </div>
+
+    <div class="clients-grid">
+      <div class="cell" data-reveal="fade" style="--rd:.02s">Aesop</div>
+      <div class="cell" data-reveal="fade" style="--rd:.06s">Vitra</div>
+      <div class="cell" data-reveal="fade" style="--rd:.10s">Hay</div>
+      <div class="cell" data-reveal="fade" style="--rd:.14s">Maharam</div>
+      <div class="cell" data-reveal="fade" style="--rd:.18s">Tekla</div>
+      <div class="cell" data-reveal="fade" style="--rd:.22s">Frama</div>
+      <div class="cell" data-reveal="fade" style="--rd:.26s">Carhartt WIP</div>
+      <div class="cell" data-reveal="fade" style="--rd:.30s">Norse Projects</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="quote">
+  <div class="wrap">
+    <blockquote data-reveal>
+      <p class="q">„Thomas liest einen Raum wie ein Dokumentarist. Er hat aus drei Drehtagen <b>den ruhigsten, durchdachtesten Film gemacht, den wir je hatten</b> — und wir haben viele gemacht."</p>
+      <div class="who">
+        <span class="bar"></span>
+        <span>Anna Lindqvist · Creative Director, Tekla</span>
+      </div>
+    </blockquote>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <h2 data-reveal>
+      <a href="mailto:hello@thomatic.com">Lass uns etwas<br/><b>Gutes machen.</b><span class="arr">↗</span></a>
+    </h2>
+    <div class="info-row">
+      <div class="cell" data-reveal="fade" style="--rd:.05s"><div class="k">E-Mail</div><div class="v"><a href="mailto:hello@thomatic.com">hello@thomatic.com</a></div></div>
+      <div class="cell" data-reveal="fade" style="--rd:.12s"><div class="k">Telefon</div><div class="v">+41 · 79 · 000 00 00</div></div>
+      <div class="cell" data-reveal="fade" style="--rd:.19s"><div class="k">Studio</div><div class="v">Thurgau, CH — Besuche nach Vereinbarung</div></div>
+      <div class="cell" data-reveal="fade" style="--rd:.26s"><div class="k">Anderswo</div><div class="v"><a href="#">Instagram</a> · <a href="#">Vimeo</a> · <a href="#">LinkedIn</a></div></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <footer>
+      <div class="l">
+        <span>© 2026 — thomatic.</span>
+        <span>Thomas Krutsch · Freier Videograf</span>
+      </div>
+      <div>Seite v.01 · Thurgau / CH</div>
+    </footer>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* === Reel: lazy YouTube embed === */
+    const reel = document.querySelector('.reel-frame[data-video-id]');
+    if (reel) {
+      const play = () => {
+        if (reel.classList.contains('is-playing')) return;
+        const id = reel.getAttribute('data-video-id');
+        const iframe = document.createElement('iframe');
+        iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+        iframe.title = 'thomatic. — Showreel';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.allowFullscreen = true;
+        reel.appendChild(iframe);
+        reel.classList.add('is-playing');
+      };
+      reel.addEventListener('click', play);
+      reel.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); }
+      });
+    }
+
+    /* === Hero line-mask reveal on load === */
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.hero .line-mask').forEach(el => el.classList.add('is-in'));
+    });
+
+    /* === Scroll reveal === */
+    if ('IntersectionObserver' in window && !reduce) {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+      document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+    } else {
+      document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-in'));
+    }
+
+    /* === Scroll progress bar + nav state + reel parallax === */
+    const progress = document.querySelector('.scroll-progress');
+    const nav = document.querySelector('.nav');
+    const placeholder = document.querySelector('.reel-frame .placeholder');
+    let ticking = false;
+
+    function onScroll() {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const p = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      if (progress) progress.style.setProperty('--p', p + '%');
+      if (nav) nav.classList.toggle('is-scrolled', h.scrollTop > 24);
+
+      if (placeholder && !reduce) {
+        const rect = placeholder.parentElement.getBoundingClientRect();
+        const center = rect.top + rect.height / 2 - window.innerHeight / 2;
+        const py = Math.max(-40, Math.min(40, -center * 0.06));
+        placeholder.style.setProperty('--py', py + 'px');
+      }
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+    }, { passive: true });
+    onScroll();
+
+    /* === Clients pointer glow === */
+    document.querySelectorAll('.clients-grid .cell').forEach(cell => {
+      cell.addEventListener('pointermove', e => {
+        const r = cell.getBoundingClientRect();
+        cell.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+        cell.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+      });
+    });
+
+    /* === Active nav link on scroll === */
+    const sections = ['work', 'about', 'services', 'contact'].map(id => document.getElementById(id)).filter(Boolean);
+    const navLinks = document.querySelectorAll('.nav .links a');
+    if ('IntersectionObserver' in window && sections.length) {
+      const so = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id));
+          }
+        });
+      }, { rootMargin: '-40% 0px -55% 0px' });
+      sections.forEach(s => so.observe(s));
+    }
+  })();
+</script>
+
+</body>
+</html>
