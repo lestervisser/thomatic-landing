@@ -71,6 +71,25 @@
   .nav .cta { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; padding: 11px 18px; border: 1px solid var(--line-2); color: var(--text); transition: all .2s; }
   .nav .cta:hover { background: var(--text); color: var(--ink); border-color: var(--text); }
 
+  /* Hamburger */
+  .nav .burger { display: none; width: 40px; height: 40px; background: transparent; border: 1px solid var(--line-2); cursor: pointer; padding: 0; position: relative; z-index: 60; }
+  .nav .burger span { position: absolute; left: 10px; right: 10px; height: 1px; background: var(--text); transition: transform .35s cubic-bezier(.16,.84,.24,1), top .35s cubic-bezier(.16,.84,.24,1), opacity .2s ease; }
+  .nav .burger span:nth-child(1) { top: 14px; }
+  .nav .burger span:nth-child(2) { top: 20px; }
+  .nav .burger span:nth-child(3) { top: 26px; }
+  .nav .burger.is-open span:nth-child(1) { top: 20px; transform: rotate(45deg); }
+  .nav .burger.is-open span:nth-child(2) { opacity: 0; }
+  .nav .burger.is-open span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+
+  /* Mobile menu drawer */
+  .mobile-menu { position: fixed; inset: 0; z-index: 55; background: rgba(10,10,10,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; padding: 96px 32px 48px; opacity: 0; pointer-events: none; transition: opacity .35s ease; }
+  .mobile-menu.is-open { opacity: 1; pointer-events: auto; }
+  .mobile-menu a { display: block; font-family: 'Inter Tight', sans-serif; font-weight: 300; font-size: 44px; letter-spacing: -0.04em; color: var(--text); padding: 14px 0; border-bottom: 1px solid var(--line); transform: translateY(20px); opacity: 0; transition: transform .5s cubic-bezier(.16,.84,.24,1), opacity .5s ease; transition-delay: var(--md, 0s); }
+  .mobile-menu.is-open a { transform: translateY(0); opacity: 1; }
+  .mobile-menu .cta-row { margin-top: auto; padding-top: 32px; display: flex; flex-direction: column; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-2); transform: translateY(20px); opacity: 0; transition: transform .5s cubic-bezier(.16,.84,.24,1), opacity .5s ease; transition-delay: .25s; }
+  .mobile-menu.is-open .cta-row { transform: translateY(0); opacity: 1; }
+  .mobile-menu .cta-row a { font-size: inherit; padding: 0; border: 0; transform: none; opacity: 1; transition: none; color: var(--text); letter-spacing: inherit; }
+
   /* ============ HERO ============ */
   .hero { padding: 120px 0 100px; position: relative; }
   .hero .tag { display: flex; align-items: center; gap: 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--text-2); margin-bottom: 36px; }
@@ -222,14 +241,65 @@
   footer .l { display: flex; gap: 28px; }
 
   @media (max-width: 900px) {
-    .wrap { padding: 0 24px; }
-    .work-grid { grid-template-columns: 1fr; }
-    .hero .meta-row { grid-template-columns: repeat(2, 1fr); }
-    .about-grid { grid-template-columns: 1fr; gap: 48px; }
-    .clients-grid { grid-template-columns: repeat(2, 1fr); }
-    .contact .info-row { grid-template-columns: repeat(2, 1fr); }
-    .reel-frame .play-btn { width: 80px; height: 80px; }
+    .wrap { padding: 0 22px; }
+    .nav .row { height: 64px; }
+    .nav .links, .nav .cta { display: none; }
+    .nav .burger { display: block; }
+    .grain { display: none; }
+
+    .hero { padding: 72px 0 64px; }
+    .hero .tag { margin-bottom: 24px; font-size: 10px; letter-spacing: 0.28em; }
+    .hero h1 { font-size: clamp(40px, 10vw, 64px); line-height: 1.02; }
+    .hero .meta-row { grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 48px; padding-top: 24px; }
+    .hero .meta-row .cell .v { font-size: 14px; }
+
+    .reel-section { padding: 24px 0 72px; }
+    .reel-frame { aspect-ratio: 16/9; }
+    .reel-frame .corner { font-size: 9px; letter-spacing: 0.22em; }
+    .reel-frame .corner.tl, .reel-frame .corner.tr { top: 14px; }
+    .reel-frame .corner.bl, .reel-frame .corner.br { bottom: 14px; }
+    .reel-frame .corner.tl, .reel-frame .corner.bl { left: 16px; }
+    .reel-frame .corner.tr, .reel-frame .corner.br { right: 16px; }
+    .reel-frame .play-btn { width: 72px; height: 72px; }
     .reel-frame .play-btn::after { border-width: 10px 0 10px 16px; }
+
+    .sec-head { flex-direction: column; align-items: flex-start; gap: 12px; padding-bottom: 28px; margin-bottom: 36px; }
+    .sec-head .right { padding-bottom: 0; }
+
+    .work { padding: 24px 0 80px; }
+    .work-grid { grid-template-columns: 1fr; gap: 28px; }
+    .project .info .l h3 { font-size: 19px; }
+
+    .about { padding: 24px 0 80px; }
+    .about-grid { grid-template-columns: 1fr; gap: 36px; }
+    .portrait { aspect-ratio: 5/6; }
+    .about p { font-size: 22px; line-height: 1.4; }
+    .about p.dim { font-size: 16px; }
+    .services { margin-top: 48px; }
+    .services .row { grid-template-columns: 40px 1fr auto; gap: 16px; padding: 20px 0; }
+    .services .row .nm { font-size: 18px; }
+    .services .row .nm small { font-size: 13px; }
+    .services .row:hover { padding-left: 8px; }
+
+    .clients { padding: 24px 0 80px; }
+    .clients-grid { grid-template-columns: repeat(2, 1fr); }
+    .clients-grid .cell { padding: 28px 16px; font-size: 16px; }
+
+    .quote { padding: 48px 0 80px; }
+    .quote .q { font-size: clamp(22px, 5.5vw, 32px); line-height: 1.3; }
+    .quote .who { margin-top: 28px; font-size: 10px; }
+
+    .contact { padding: 64px 0 32px; }
+    .contact h2 { font-size: clamp(44px, 12vw, 80px); line-height: 0.95; }
+    .contact h2 a { gap: 10px; }
+    .contact .info-row { grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; padding-top: 28px; }
+
+    footer { flex-direction: column; align-items: flex-start; gap: 12px; padding: 28px 0; }
+    footer .l { flex-direction: column; gap: 6px; }
+
+    .vbx { padding: 20px; }
+    .vbx .stage { aspect-ratio: 16/9; }
+    .vbx .label { display: none; }
   }
 </style>
 
@@ -258,8 +328,23 @@
       <a href="#contact">Kontakt</a>
     </nav>
     <a class="cta" href="#contact">Anfragen</a>
+    <button class="burger" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+
+<!-- MOBILE MENU -->
+<nav class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <a href="#work" style="--md:.08s">Arbeiten</a>
+  <a href="#about" style="--md:.14s">Über</a>
+  <a href="#services" style="--md:.20s">Leistungen</a>
+  <a href="#contact" style="--md:.26s">Kontakt</a>
+  <div class="cta-row">
+    <a href="mailto:hello@thomatic.com">hello@thomatic.com</a>
+    <a href="#contact">Projekt anfragen →</a>
+  </div>
+</nav>
 
 <!-- HERO -->
 <section class="hero">
@@ -520,6 +605,25 @@
 <script>
   (function () {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* === Mobile menu === */
+    const burger = document.querySelector('.nav .burger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (burger && mobileMenu) {
+      const setOpen = (open) => {
+        burger.classList.toggle('is-open', open);
+        mobileMenu.classList.toggle('is-open', open);
+        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        mobileMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+        burger.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+        document.body.classList.toggle('vbx-locked', open);
+      };
+      burger.addEventListener('click', () => setOpen(!burger.classList.contains('is-open')));
+      mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('is-open')) setOpen(false);
+      });
+    }
 
     /* === Video lightbox === */
     const vbx = document.getElementById('vbx');
